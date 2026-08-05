@@ -3,11 +3,10 @@ import "./Signup.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-function Signup() {
+function Login() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
-    name: "",
     email: "",
     password: "",
   });
@@ -19,26 +18,26 @@ function Signup() {
     });
   };
 
-  const handleSignup = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/signup",
+        "http://localhost:3002/login",
         user
       );
 
-      alert(response.data.message);
+      // Save JWT Token
+      localStorage.setItem("token", response.data.token);
 
-      setUser({
-        name: "",
-        email: "",
-        password: "",
-      });
+      console.log("Stored:", localStorage.getItem("token"));
 
-      navigate("/login");
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 3000);
+
     } catch (error) {
-      alert(error.response?.data?.message || "Something went wrong!");
+      alert(error.response?.data?.message || "Login Failed");
     }
   };
 
@@ -52,29 +51,19 @@ function Signup() {
           className="signup-logo"
         />
 
-        <h2 className="signup-title">Create Account</h2>
+        <h2 className="signup-title">Welcome Back</h2>
 
         <p className="signup-subtitle">
-          Open your free Zerodha account
+          Login to your Zerodha account
         </p>
 
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleLogin}>
 
           <div className="mb-3">
-            <label className="form-label">Full Name</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Enter your name"
-              name="name"
-              value={user.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
+            <label className="form-label">
+              Email Address
+            </label>
 
-          <div className="mb-3">
-            <label className="form-label">Email Address</label>
             <input
               type="email"
               className="form-control"
@@ -87,11 +76,14 @@ function Signup() {
           </div>
 
           <div className="mb-4">
-            <label className="form-label">Password</label>
+            <label className="form-label">
+              Password
+            </label>
+
             <input
               type="password"
               className="form-control"
-              placeholder="Create a password"
+              placeholder="Enter your password"
               name="password"
               value={user.password}
               onChange={handleChange}
@@ -99,15 +91,18 @@ function Signup() {
             />
           </div>
 
-          <button type="submit" className="btn signup-btn">
-            Create Account
+          <button
+            type="submit"
+            className="btn signup-btn"
+          >
+            Login
           </button>
 
         </form>
 
         <p className="login-text">
-          Already have an account?{" "}
-          <Link to="/login">Login</Link>
+          Don't have an account?{" "}
+          <Link to="/signup">Create Account</Link>
         </p>
 
       </div>
@@ -115,4 +110,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
