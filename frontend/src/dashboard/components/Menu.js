@@ -1,10 +1,34 @@
-import React, { useState } from "react";
-
+import React, { useState,useEffect } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+  const getProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:3002/profile",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setUserName(res.data.name);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  getProfile();
+}, []);
 
   const handleMenuClick = (index) => {
     setSelectedMenu(index);
@@ -90,10 +114,29 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className="profile" onClick={handleProfileClick}>
-          <div className="avatar">ZU</div>
-          <p className="username">USERID</p>
-        </div>
+        <hr />
+            <div className="profile" onClick={handleProfileClick}>
+  <div className="avatar">
+    {userName ? userName.charAt(0).toUpperCase() : "U"}
+  </div>
+
+  <p className="username">
+    {userName || "Loading..."}
+  </p>
+</div>
+
+{isProfileDropdownOpen && (
+  <div className="profile-dropdown">
+    <button
+      onClick={() => {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }}
+    >
+      Logout
+    </button>
+  </div>
+)}
       </div>
     </div>
   );

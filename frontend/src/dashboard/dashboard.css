@@ -295,12 +295,6 @@ hr {
   height: 30px;
 }
 
-.profile {
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  margin-left: 20px;
-}
 
 .profile .avatar {
   width: 30px;
@@ -318,12 +312,52 @@ hr {
   background: rgb(252, 229, 252);
   margin-right: 8px;
 }
+.profile {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-.profile .username {
+.profile-dropdown {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.profile-dropdown button {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: #387ed1;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.profile-dropdown button:hover {
+  background: #2f6cb5;
+}
+
+.profile .userName {
   font-size: 0.8rem;
   font-weight: 300;
 }
 
+.logout-btn {
+  width: 90%;
+  margin: 15px auto;
+  display: block;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #387ed1;
+  color: white;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #2968b3;
+}
 /* sudo selectors */
 
 .menu:hover {
