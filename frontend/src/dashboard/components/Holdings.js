@@ -11,7 +11,7 @@ const Holdings = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:3002/allHoldings",
+        "https://zerodha-5hf3.onrender.com/allHoldings",
         {
           headers: {
             Authorization: `Bearer ${token}`,

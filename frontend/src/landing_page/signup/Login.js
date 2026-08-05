@@ -23,7 +23,7 @@ function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/login",
+        "https://zerodha-5hf3.onrender.com/login",
         user
       );
 

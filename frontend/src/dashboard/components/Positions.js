@@ -10,7 +10,7 @@ const Positions = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:3002/allPositions",
+        "https://zerodha-5hf3.onrender.com/allPositions",
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -24,7 +24,7 @@ function Signup() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/signup",
+        "https://zerodha-5hf3.onrender.com/signup",
         user
       );
 

@@ -13,7 +13,7 @@ const Menu = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.get(
-        "http://localhost:3002/profile",
+        "https://zerodha-5hf3.onrender.com/profile",
         {
           headers: {
             Authorization: `Bearer ${token}`,
