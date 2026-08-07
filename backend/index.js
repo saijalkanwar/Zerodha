@@ -4,10 +4,17 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors=require("cors");
+const bcrypt = require("bcrypt");
+app.use(express.json());
+const jwt = require("jsonwebtoken");
+const authMiddleware = require("./middleware/authMiddleware");
 
 const {HoldingsModel}=require('./model/HoldingsModel');
 const { PositionsModel} = require('./model/PositionsModel');
 const { HoldingSchema } = require("./schemas/HoldingSchema");
+const { OrdersModel } = require('./model/OrdersModel');
+const  UserModel  =require('./model/UserModel');
+console.log(UserModel);
 
 const PORT=process.env.PORT || 3002;
 
@@ -182,19 +189,199 @@ app.use(bodyParser.json());
 // res.send("Done");
 // });
 
-app.get('/allHoldings',async(req,res)=>{
+app.get('/allHoldings',authMiddleware,async(req,res)=>{
     let allHoldings = await HoldingsModel.find({});
     res.json(allHoldings);
 
 });
 
-app.get('/allPositions',async (req,res)=>{
+app.get('/allPositions',authMiddleware,async (req,res)=>{
     let allPositions=await PositionsModel.find({});
     res.json(allPositions);
 })
 
-app.listen(PORT, () => {
-    console.log("App started");
-    mongoose.connect(uri);
-    console.log("Connected to MongoDB");
+// app.post('/newOrder',async(req,res)=>{
+//     let newOrder = new OrdersModel({
+//         name:req.body.name,
+//         qty:req.body.qty,
+//         price:req.body.price,
+//         mode:req.body.mode,
+//     });
+//     newOrder.save();
+//     res.send("Order saved");
+
+// });
+
+app.post("/newOrder", authMiddleware, async (req, res) => {
+  try {
+    const { name, qty, price, mode } = req.body;
+
+    const quantity = Number(qty);
+    const orderPrice = Number(price);
+
+    // Save order
+    const newOrder = new OrdersModel({
+      name,
+      qty: quantity,
+      price: orderPrice,
+      mode,
+    });
+
+    await newOrder.save();
+
+    // Update Holdings only for BUY orders
+    if (mode === "BUY") {
+      const existingHolding = await HoldingsModel.findOne({ name });
+
+      if (existingHolding) {
+        // Calculate new average price
+        const totalInvestment =
+          existingHolding.qty * existingHolding.avg +
+          quantity * orderPrice;
+
+        const newQty = existingHolding.qty + quantity;
+
+        existingHolding.qty = newQty;
+        existingHolding.avg = totalInvestment / newQty;
+        existingHolding.price = orderPrice;
+
+        await existingHolding.save();
+      } else {
+        // If stock is not already in holdings
+        const newHolding = new HoldingsModel({
+          name,
+          qty: quantity,
+          avg: orderPrice,
+          price: orderPrice,
+          net: "0.00%",
+          day: "0.00%",
+        });
+
+        await newHolding.save();
+      }
+    }
+
+    res.status(201).json({
+      message: "Order placed successfully",
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Error placing order",
+    });
+  }
 });
+
+//AUTH
+app.post('/signup',async(req,res)=>{
+    try{
+        console.log(req.body);
+        const {name,email,password}=req.body;
+        console.log(name,email,password);
+        const existingUser=await UserModel.findOne({email});
+        console.log(existingUser);
+        if(existingUser){
+            return res.status(400).json({message:"User already exists"});
+        }
+        //.
+        const hashedPassword=await bcrypt.hash(password,10);
+        const newUser=new UserModel({
+            name,
+            email,
+            password: hashedPassword
+        });
+        await newUser.save();
+        res.status(201).json({message:"User created successfully"   
+       });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Error creating user"});
+    }
+});
+app.get("/verify", authMiddleware, (req, res) => {
+    res.status(200).json({
+        message: "Token is valid",
+        user: req.user,
+    });
+});
+app.post("/login", async (req, res) => {
+    try {
+
+        const { email, password } = req.body;
+
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Invalid Password"
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user._id,
+                name:user.name,
+                email: user.email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
+
+        res.status(200).json({
+            message: "Login Successful",
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Login failed"
+        });
+    }
+});
+
+app.get("/profile", authMiddleware, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.user.id).select("-password");
+
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({
+      message: "Error fetching profile",
+    });
+  }
+});
+
+
+// app.listen(PORT, () => {
+//     console.log("App started");
+//     mongoose.connect(uri);
+//     console.log("Connected to MongoDB");
+// });
+mongoose
+  .connect(uri)
+  .then(() => {
+    console.log("Connected to MongoDB");
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
