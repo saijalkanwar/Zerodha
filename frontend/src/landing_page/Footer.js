@@ -1,57 +1,138 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
     <footer style={{ backgroundColor: "rgb(250, 250, 250)" }}>
       <div className="container border-top mt-5">
         <div className="row mt-5">
+
           <div className="col">
-            <img src="media/logo.svg" style={{ width: "50%" }} />
+            <img
+              src="/media/logo.svg"
+              alt="Zerodha Logo"
+              style={{ width: "50%" }}
+            />
+
             <p>
               &copy; 2010 - 2024, Not Zerodha Broking Ltd. All rights reserved.
             </p>
           </div>
+
           <div className="col">
             <p>Company</p>
-            <a href="">About</a>
+
+            <Link to="/about">About</Link>
             <br />
-            <a href="">Products</a>
+
+            <Link to="/product">Products</Link>
             <br />
-            <a href="">Pricing</a>
+
+            <Link to="/pricing">Pricing</Link>
             <br />
-            <a href="">Referral programme</a>
+
+            <Link to="/signup">Referral programme</Link>
             <br />
-            <a href="">Careers</a>
+
+            <Link to="/about">Careers</Link>
             <br />
-            <a href="">Zerodha.tech</a>
+
+            <a
+              href="https://zerodha.tech/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Zerodha.tech
+            </a>
             <br />
-            <a href="">Press & media</a>
+
+            <a
+              href="https://zerodha.com/media/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Press & media
+            </a>
             <br />
-            <a href="">Zerodha cares (CSR)</a>
+
+            <a
+              href="https://zerodha.com/about/csr/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Zerodha cares (CSR)
+            </a>
             <br />
           </div>
+
           <div className="col">
             <p>Support</p>
-            <a href="">Contact</a>
+
+            <Link to="/support">Contact</Link>
             <br />
-            <a href="">Support portal</a>
+
+            <a
+              href="https://support.zerodha.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Support portal
+            </a>
             <br />
-            <a href="">Z-Connect blog</a>
+
+            <a
+              href="https://zerodha.com/z-connect/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Z-Connect blog
+            </a>
             <br />
-            <a href="">List of charges</a>
+
+            <a
+              href="https://zerodha.com/charges/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              List of charges
+            </a>
             <br />
-            <a href="">Downloads & resources</a>
+
+            <a
+              href="https://zerodha.com/resources/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Downloads & resources
+            </a>
             <br />
           </div>
+
           <div className="col">
             <p>Account</p>
-            <a href="">Open an account</a>
+
+            <Link to="/signup">Open an account</Link>
             <br />
-            <a href="">Fund transfer</a>
+
+            <a
+              href="https://zerodha.com/fund-transfer/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Fund transfer
+            </a>
             <br />
-            <a href="">60 day challenge</a>
+
+            <a
+              href="https://zerodha.com/60-day-challenge/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              60 day challenge
+            </a>
             <br />
           </div>
+
         </div>
       </div>
     </footer>
